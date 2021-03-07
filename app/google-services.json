@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "969052337299",
+    "firebase_url": "https://paris-bistro-6b97e.firebaseio.com",
+    "project_id": "paris-bistro-6b97e",
+    "storage_bucket": "paris-bistro-6b97e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969052337299:android:f09ccd810ea0bdd34fc966",
+        "android_client_info": {
+          "package_name": "com.example.parisbistro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969052337299-deb9me6dpqp1tn9r2e3qtuafjba5mqjf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.parisbistro",
+            "certificate_hash": "6830e9f6408e1c4fa084152f49936c4170b26b3c"
+          }
+        },
+        {
+          "client_id": "969052337299-h6gd95qhtuee0o6blje3ebgpiqpef4f3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO8Rj7-Kpm-E0KYG-GHLhkcnUIWV72r7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969052337299-h6gd95qhtuee0o6blje3ebgpiqpef4f3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
