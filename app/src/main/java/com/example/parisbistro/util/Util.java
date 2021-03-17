@@ -1,4 +1,4 @@
-package com.jafapps.deliveryaplicativo;
+package com.example.parisbistro.util;
 
 
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.example.parisbistro;
+package com.example.parisbistro.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.example.parisbistro.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -61,12 +62,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_deslogar){
+        if (item.getItemId() == R.id.nav_pedidos) {
+            Toast.makeText(this, "Pedidos clicado", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, PedidosActivity.class);
+            startActivity(intent);
+        }else if (item.getItemId() == R.id.nav_deslogar){
             Toast.makeText(this, "Deslogar clicado", Toast.LENGTH_SHORT).show();
         }
         else if (item.getItemId() == R.id.nav_desenvolvedor){
             Toast.makeText(this, "Desenvolvedor clicado", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this.PedidosActivity.class)
+           // Intent intent = new Intent(this,PedidosActivity.class);
+          //  startActivity(intent);
         }
         return false;
     }
