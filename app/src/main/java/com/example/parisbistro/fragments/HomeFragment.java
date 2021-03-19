@@ -16,13 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.parisbistro.R;
+import com.example.parisbistro.activities.CarrinhoActivity;
 import com.example.parisbistro.activities.ProdutosActivity;
 import com.example.parisbistro.adapters.AdapterRecyclerViewCategoria;
 import com.example.parisbistro.adapters.SliderAdapterImage;
 import com.example.parisbistro.model.Categoria;
+import com.example.parisbistro.model.Produto;
+import com.example.parisbistro.singleton.Carrinho;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -45,6 +49,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
     private SliderView sliderView;
     private AppCompatTextView textView_informativo;
     private RecyclerView recyclerView;
+    private TextView textView_quantidadeCarrinho;
     private CardView cardView_carrinho;
 
    // Slider de imagens
@@ -97,6 +102,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.cardView_carrinho:
+                startActivity(new Intent(getContext(), CarrinhoActivity.class));
                 break;
         }
     }
@@ -146,10 +152,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
                     String url1 = (String) documentSnapshot.getData().get("url_imagem1");
                     String url2 = (String) documentSnapshot.getData().get("url_imagem2");
 
-                    Log.d("dyww Informativo", informativo);
-                    Log.d("dyww Url1", url1);
-                    Log.d("dyww Url2", url2);
-
                     configSliderImage(url1,url2,informativo);
                 }
             }
@@ -196,4 +198,26 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
         });
     }
 
+    private void atualizarCarrinho(){
+        TextView textView = getView().findViewById(R.id.textView_home_quantidadeCarrinho);
+        CardView cardView = getView().findViewById(R.id.cardView_carrinho);
+
+        List<Produto> produtos = Carrinho.getInstance();
+        if (!produtos.isEmpty()){
+            cardView.setVisibility(View.VISIBLE);
+            int quantidade = produtos.size();
+            textView.setText(quantidade+"");
+        }else{
+            cardView.setVisibility(View.GONE);
+            textView.setText("0");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        atualizarCarrinho();
+
+    }
 }

@@ -67,6 +67,7 @@
             android:id="@+id/cardView_carrinho"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -108,7 +109,8 @@
                         android:text="0"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"/>
+                        android:textColor="@color/colorPrimary"
+                        android:id="@+id/textView_home_quantidadeCarrinho"/>
 
 
                 </FrameLayout>
