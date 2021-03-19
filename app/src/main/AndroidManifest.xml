@@ -12,8 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParisBistro">
-        <activity android:name=".activities.ProdutosActivity"
-            android:theme="@style/AppThemNoActionBar"></activity>
+        <activity android:name=".activities.CarrinhoActivity"></activity>
+        <activity
+            android:name=".activities.AdicionaisActivity"
+            android:theme="@style/AppThemNoActionBar" />
+        <activity
+            android:name=".activities.ProdutosActivity"
+            android:theme="@style/AppThemNoActionBar" />
         <activity android:name=".activities.PedidosActivity" />
         <activity
             android:name=".activities.MainActivity"

@@ -4,18 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.parisbistro.R;
-import com.example.parisbistro.adapters.AdapterRecyclerViewCategoria;
 import com.example.parisbistro.adapters.AdapterRecyclerViewProduto;
-import com.example.parisbistro.model.Categoria;
 import com.example.parisbistro.model.Produto;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -82,8 +80,12 @@ public class ProdutosActivity extends AppCompatActivity implements AdapterRecycl
 
     //click item lista
     @Override
-    public void produtoOnClick(Produto categoria) {
+    public void produtoOnClick(Produto produto) {
+        Intent intent = new Intent(this, AdicionaisActivity.class);
 
+        intent.putExtra("produto",produto);
+
+        startActivity(intent);
     }
 
 

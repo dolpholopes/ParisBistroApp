@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.parisbistro.R;
-import com.example.parisbistro.model.Categoria;
 import com.example.parisbistro.model.Produto;
 
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class AdapterRecyclerViewProduto extends RecyclerView.Adapter<AdapterRecy
     }
 
     public interface ProdutoClick{
-        void produtoOnClick(Produto categoria);
+        void produtoOnClick(Produto produto);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
