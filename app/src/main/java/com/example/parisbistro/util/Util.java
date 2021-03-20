@@ -100,6 +100,33 @@ public class Util {
         return false;
     }
 
+    public static String errorFirebase(String error){
+        if (error.contains("email address is badly")){
+            return "Email inválido";
+        }
+        else if (error.contains("The password is invalid")){
+            return "Senha inválida";
+        }
+        else if (error.contains("There is no user record")){
+                return "Email não cadastrado no sistema";
+        }
+        else if (error.contains("insufficient permissions")){
+            return "Usuario não autorizado";
+        }
+        else if (error.contains("least 6 characters")){
+            return "Insira uma senha de no mínimo de 6 caracteres";
+        }
+        else if (error.contains("interrupted connection")){
+            return "Erro de conexção";
+        }
+        else if (error.contains("address is already")){
+            return "Email já cadastrado";
+        }
+        else{
+            return error;
+        }
+    }
+
 
 
     }

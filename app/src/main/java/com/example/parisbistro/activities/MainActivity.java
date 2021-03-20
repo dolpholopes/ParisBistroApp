@@ -11,6 +11,8 @@ import com.example.parisbistro.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         configNavegacao();
+        statusUsuario();
     }
 
     @Override
@@ -58,16 +61,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupWithNavController(navigationView, navController);
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null){
+            navigationView.getMenu().getItem(1).setVisible(false);
+            navigationView.getMenu().getItem(2).setVisible(true);
+        }else{
+            navigationView.getMenu().getItem(1).setVisible(true);
+            navigationView.getMenu().getItem(2).setVisible(false);
+        }
+
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_pedidos) {
-            Toast.makeText(this, "Pedidos clicado", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, PedidosActivity.class);
             startActivity(intent);
         }else if (item.getItemId() == R.id.nav_deslogar){
-            Toast.makeText(this, "Deslogar clicado", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+        }else if (item.getItemId() == R.id.nav_login){
+            startActivity(new Intent(getBaseContext(), LoginActivity.class));
         }
         else if (item.getItemId() == R.id.nav_desenvolvedor){
             Toast.makeText(this, "Desenvolvedor clicado", Toast.LENGTH_SHORT).show();
@@ -75,5 +89,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           //  startActivity(intent);
         }
         return false;
+    }
+
+    private void statusUsuario(){
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                configNavegacao();
+            }
+        });
     }
 }

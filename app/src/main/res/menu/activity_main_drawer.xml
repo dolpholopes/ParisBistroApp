@@ -12,6 +12,10 @@
             android:id="@+id/nav_deslogar"
             android:icon="@drawable/ic_menu_lateral_deslogar_24"
             android:title="Deslogar" />
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_login"
+            android:title="Fazer login" />
     </group>
     <item android:title="Desenvolvedor">
         <menu>

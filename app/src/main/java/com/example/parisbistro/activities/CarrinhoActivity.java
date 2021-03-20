@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,7 +74,7 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView textView = findViewById(R.id.textView_toolbar);
-        textView.setText("Carrinho");
+        textView.setText("Meus pedidos");
     }
 
     @Override
@@ -116,6 +117,7 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         if (produtos.isEmpty()){
             Toast.makeText(getBaseContext(), "Nenhum item foi adicionado ao carrinho", Toast.LENGTH_SHORT).show();
         }else{
+            startActivity(new Intent(this, LoginActivity.class));
            //dialogoOpcaoPagamento();
         }
     }
