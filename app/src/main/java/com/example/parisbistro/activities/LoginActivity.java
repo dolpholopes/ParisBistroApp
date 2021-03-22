@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -65,8 +66,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.textView_login_cadastrar:
-
-               //buttonCadastrar();
+                finish();
+               startActivity(new Intent(getBaseContext(), CadastrarActivity.class));
 
                 break;
 
@@ -118,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void dialogoOpcao(){
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setMessage("Login efetuado com sucesso - Escolha uma opção")
+                .setMessage("Login efetuado com sucesso\n\nEscolha uma opção")
                 .setCancelable(false)
                 .setPositiveButton("Retirar pedido no local", new DialogInterface.OnClickListener() {
                     @Override
