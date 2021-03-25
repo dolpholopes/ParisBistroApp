@@ -19,7 +19,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="Paris Bistrô Delivery"
+        android:text="@string/texto_toolbar"
         android:id="@+id/textView_toolbar"
         android:gravity="center"
         android:textSize="18sp"

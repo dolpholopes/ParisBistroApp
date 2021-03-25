@@ -13,8 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class Util {
@@ -125,6 +128,16 @@ public class Util {
         else{
             return error;
         }
+    }
+
+    public static String dataPedido(Long data){
+        Locale locale = new Locale("pt","BR");
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",locale);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/Sao_Paulo"));
+
+        String dataPedido = String.valueOf(simpleDateFormat.format(data));
+        return dataPedido;
     }
 
 

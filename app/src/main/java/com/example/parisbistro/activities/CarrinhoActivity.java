@@ -117,8 +117,8 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         if (produtos.isEmpty()){
             Toast.makeText(getBaseContext(), "Nenhum item foi adicionado ao carrinho", Toast.LENGTH_SHORT).show();
         }else{
-            startActivity(new Intent(this, LoginActivity.class));
-           //dialogoOpcaoPagamento();
+            //startActivity(new Intent(this, LoginActivity.class));
+           dialogoOpcaoPagamento();
         }
     }
 
@@ -133,6 +133,8 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        startActivity(new Intent(getBaseContext(), PedidoReceberEmCasaActivity.class));
 
                     }
                 }).create();

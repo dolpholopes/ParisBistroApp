@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.HomeFragment"
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,11 +58,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_home"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_below="@+id/cardView_home_SlideImagens"
-            android:layout_margin="5dp"/>
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView_carrinho"
