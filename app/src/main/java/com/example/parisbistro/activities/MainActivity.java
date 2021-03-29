@@ -50,10 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
 
-                        String token = task.getResult();
-
-                        Log.d("tgrf", token);
-
                     }
                 });
 
@@ -114,10 +110,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null){
             navigationView.getMenu().getItem(1).setVisible(false);
-            navigationView.getMenu().getItem(2).setVisible(true);
         }else{
-            navigationView.getMenu().getItem(1).setVisible(true);
-            navigationView.getMenu().getItem(2).setVisible(false);
+           navigationView.getMenu().getItem(1).setVisible(true);
         }
 
     }
@@ -125,17 +119,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_pedidos) {
-            Intent intent = new Intent(this, PedidosActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(getBaseContext(), PedidosActivity.class));
         }else if (item.getItemId() == R.id.nav_deslogar){
             FirebaseAuth.getInstance().signOut();
-        }else if (item.getItemId() == R.id.nav_login){
-            startActivity(new Intent(getBaseContext(), LoginActivity.class));
-        }
-        else if (item.getItemId() == R.id.nav_desenvolvedor){
+        }else if (item.getItemId() == R.id.nav_desenvolvedor){
             Toast.makeText(this, "Desenvolvedor clicado", Toast.LENGTH_SHORT).show();
-           // Intent intent = new Intent(this,PedidosActivity.class);
-          //  startActivity(intent);
         }
         return false;
     }

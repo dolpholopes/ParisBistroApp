@@ -140,7 +140,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 break;
 
             case R.id.button_pedidoReceber_pagarCartao:
-                Toast.makeText(getBaseContext(), "pagar cartao", Toast.LENGTH_SHORT).show();
+                //buttonPagarCartao();
                 break;
 
             case R.id.button_pedidoReceber_pagarPessoalmenteCartao:
@@ -185,6 +185,92 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         });
     }
 
+
+    private void buttonPagarCartao(){
+        String nome = editText_nome.getText().toString();
+        String contato = editText_contato.getText().toString();
+        String endereco = editText_endereco.getText().toString();
+        String referencia = editText_referencia.getText().toString();
+
+        if (nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty()){
+            Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para entrega", Toast.LENGTH_SHORT).show();
+        }else{
+            if (Util.statusInternet_MoWi(getBaseContext())){
+                salvarDadosUsuarioPagamentoCartaoFirebase(nome, contato, endereco, referencia);
+            }else{
+                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void salvarDadosUsuarioPagamentoCartaoFirebase(String nome, String contato, String endereco, String referencia){
+
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"1");
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        HashMap<String,Object> dadosUsuarios = new HashMap<>();
+        dadosUsuarios.put("nome", nome);
+        dadosUsuarios.put("contato", contato);
+        dadosUsuarios.put("endereco", endereco);
+        dadosUsuarios.put("referencia", referencia);
+
+        DocumentReference reference = firestore.collection("usuarios").document(uid);
+
+        reference.set(dadosUsuarios).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                dialogProgress.dismiss();
+                if (task.isSuccessful()){
+                    //obterToken(nome, contato, endereco, referencia);
+                    Intent intent = new Intent(getBaseContext(), PagarCartaoCreditoActivity.class);
+                    intent.putExtra("nome", nome);
+                    intent.putExtra("contato", contato);
+                    intent.putExtra("endereco", endereco + " - "  + referencia);
+                    startActivity(intent);
+
+                }else{
+                    Toast.makeText(getBaseContext(), "Erro ao salvar os dados: "+ task.getException().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    private void buttonPagarPessoalmenteCartao(){
+        String nome = editText_nome.getText().toString();
+        String contato = editText_contato.getText().toString();
+        String endereco = editText_endereco.getText().toString();
+        String referencia = editText_referencia.getText().toString();
+        String forma_pagamento = "Cartão | Entrega";
+
+        if (nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty()){
+            Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para entrega", Toast.LENGTH_SHORT).show();
+        }else{
+            if (Util.statusInternet_MoWi(getBaseContext())){
+                confirmarPedido(nome,contato,endereco,referencia,forma_pagamento);
+            }else{
+                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void confirmarPedido(String nome, String contato, String endereco, String referencia, String forma_pagamento){
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Confirmar Pedido")
+                .setMessage("\nGostaria de realizar o pedido?")
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, forma_pagamento);
+                    }
+                }).create();
+        dialog.show();
+    }
+
+
     private void buttonPagarPessoalmenteDinheiro(){
         String nome = editText_nome.getText().toString();
         String contato = editText_contato.getText().toString();
@@ -213,37 +299,18 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                         }else{
                             String levarTroco = "Entrega | Troco para: "+troco;
                             salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, levarTroco);
-
                         }
                     }
                 });
 
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
-
             }else{
                 Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void buttonPagarPessoalmenteCartao(){
-        String nome = editText_nome.getText().toString();
-        String contato = editText_contato.getText().toString();
-        String endereco = editText_endereco.getText().toString();
-        String referencia = editText_referencia.getText().toString();
-        String forma_pagamento = "Cartão | Entrega";
-
-        if (nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty()){
-            Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para entrega", Toast.LENGTH_SHORT).show();
-        }else{
-            if (Util.statusInternet_MoWi(getBaseContext())){
-                confirmarPedido(nome,contato,endereco,referencia,forma_pagamento);
-            }else{
-                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void salvarDadosUsuarioPagamentoPessoalmenteFirebase(String nome, String contato, String endereco, String referencia, String forma_pagamento){
 
@@ -311,7 +378,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             todosProdutos = todosProdutos + produto.getNome() + " <br> " +
                     produto.getAdicional() + " <br> " +
                     produto.getObservacao() + " <br><br> ";
-
         }
 
         HashMap<String, Object> dadosPedido = new HashMap<>();
@@ -341,38 +407,10 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 }
             }
         });
-
     }
 
-    private String valorTotalProdutos(){
-        double valorTotal = 0;
-        for (Produto produto: Carrinho.getInstance()){
-            double valor = Double.valueOf(produto.getValor());
-            valorTotal = valorTotal + valor;
-        }
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String valorTotalString = decimalFormat.format(valorTotal);
-        return valorTotalString;
-    }
-
-    private void confirmarPedido(String nome, String contato, String endereco, String referencia, String forma_pagamento){
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Confirmar Pedido")
-                .setMessage("\nGostaria de realizar o pedido?")
-                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, forma_pagamento);
-                    }
-                }).create();
-
-        dialog.show();
-
-    }
 
     private void dialogExibirPdf(String idPedido,String nome, long data, String produtos, String totalValorProdutos){
-
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Pedido efetuado com Sucesso")
                 .setCancelable(false)
@@ -401,7 +439,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                     }
                 }).create();
         dialog.show();
-
     }
 
 
@@ -411,7 +448,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         OutputStream outputStream;
         File pdf = null;
         Uri uri = null;
-
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
 
@@ -426,7 +462,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             descriptor = resolver.openFileDescriptor(uri,"rw");
             outputStream = new FileOutputStream(descriptor.getFileDescriptor());
 
-
         }else{
 
             File diretorioRaiz = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -439,11 +474,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             String nomeArquivo = diretorio.getPath()+"/Pedido"+idPedido+".pdf";
             pdf = new File(nomeArquivo);
             outputStream = new FileOutputStream(pdf);
-
         }
-
-
-
 
         Document document = new Document();
 
@@ -454,19 +485,13 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         pdfWriter.setBoxSize("box",new Rectangle(0,0,0,0));
         pdfWriter.setPageEvent(pdfCreator);
 
-
         document.open();
-
 
         String id = "ID Pedido:" + idPedido;
         String nomeCliente = "\nNome: \n"+nome;
         String dataPedido = "\nData e Hora: \n"+  Util.dataPedido(data);
         String pedido = "\nPedido: \n"+ produtos.replaceAll("<br>","\n");
         String valorPedido = "\nValor Total: \n"+totalValorProdutos;
-
-
-
-
 
         Font font = new Font(Font.FontFamily.TIMES_ROMAN,10, Font.NORMAL);
 
@@ -486,8 +511,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         document.add(image);
 
-
-
         paragraph = new Paragraph(id,font);
         document.add(paragraph);
 
@@ -503,64 +526,47 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         paragraph = new Paragraph(valorPedido,font);
         document.add(paragraph);
 
-
-
-
         document.close();
         outputStream.close();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-
             descriptor.close();
             visualizarPdf(pdf, uri);
-
         }else{
             visualizarPdf(pdf,uri);
         }
-
-
     }
 
-    private void visualizarPdf(File pdf, Uri uri){
 
+    private void visualizarPdf(File pdf, Uri uri){
 
         PackageManager packageManager = getPackageManager();
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setType("application/pdf");
 
-
         List<ResolveInfo> lista = packageManager.queryIntentActivities(intent,PackageManager.MATCH_DEFAULT_ONLY);
-
 
         if(lista.size() > 0){
 
             Intent intent1 = new Intent(Intent.ACTION_VIEW);
             intent1.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-
             if(pdf == null){ // versao mais nova android
-
                 intent1.setDataAndType(uri,"application/pdf");
-
             }else{ // versao mais antiga android
-
                 Uri uri1 = FileProvider.getUriForFile(getBaseContext(),"com.example.parisbistro",pdf);
                 intent1.setDataAndType(uri1,"application/pdf");
             }
 
-
             startActivityForResult(intent1,1234);
 
         }else{
-
             erroAbrirPdf();
         }
-
     }
 
     private void erroAbrirPdf(){
-
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Erro ao Abrir PDF")
                 .setCancelable(false)
@@ -568,14 +574,11 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         voltarActivityPrincipal();
-
                     }
                 }).create();
 
         dialog.show();
-
     }
 
     @Override
@@ -583,7 +586,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         super.onActivityResult(requestCode, resultCode, data);
 
         if( requestCode == 1234 ){
-
             voltarActivityPrincipal();
         }
     }
@@ -606,8 +608,19 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
                     }
                 }).create();
-
         dialog.show();
+    }
+
+    private String valorTotalProdutos(){
+        double valorTotal = 0;
+        for (Produto produto: Carrinho.getInstance()){
+            double valor = Double.valueOf(produto.getValor());
+            valorTotal = valorTotal + valor;
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String valorTotalString = decimalFormat.format(valorTotal);
+        return valorTotalString;
     }
 
 
