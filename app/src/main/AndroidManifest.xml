@@ -15,14 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParisBistro">
 
-<<<<<<< HEAD
         <activity android:name=".activities.MainActivity"
             android:theme="@style/AppThemNoActionBar" />
-=======
->>>>>>> 0d9bd449a8bf8b4ee6b74402a0390cbba74a76c4
-
         <activity
-            android:name=".activities.PagarCartaoCreditoActivity"
+            android:name=".activities.RetirarLocalActivity"
             android:theme="@style/AppThemNoActionBar" />
         <activity
             android:name=".activities.PedidoReceberEmCasaActivity"
@@ -44,8 +40,6 @@
             android:theme="@style/AppThemNoActionBar" />
         <activity
             android:name=".activities.PedidosActivity"
-            android:theme="@style/AppThemNoActionBar" />
-        <activity android:name=".activities.MainActivity"
             android:theme="@style/AppThemNoActionBar" />
         <activity
             android:name=".activities.SplashActivity"

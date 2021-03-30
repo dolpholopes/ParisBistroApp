@@ -123,7 +123,8 @@ public class CadastrarActivity extends AppCompatActivity implements View.OnClick
                 .setPositiveButton("Retirar pedido no local", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        finish();
+                        startActivity(new Intent(getBaseContext(), RetirarLocalActivity.class));
                     }
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override

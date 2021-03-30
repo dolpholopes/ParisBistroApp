@@ -124,7 +124,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .setPositiveButton("Retirar pedido no local", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        finish();
+                        startActivity(new Intent(getBaseContext(), RetirarLocalActivity.class));
                     }
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override

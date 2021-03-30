@@ -128,7 +128,7 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
                 .setPositiveButton("Retirar pedido no local", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        startActivity(new Intent(getBaseContext(), RetirarLocalActivity.class));
                     }
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override

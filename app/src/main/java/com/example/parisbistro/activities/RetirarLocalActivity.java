@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -16,15 +15,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.text.InputFilter;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +32,6 @@ import com.example.parisbistro.R;
 import com.example.parisbistro.model.Produto;
 import com.example.parisbistro.singleton.Carrinho;
 import com.example.parisbistro.util.DialogProgress;
-import com.example.parisbistro.util.MaskEditText;
 import com.example.parisbistro.util.PdfCreator;
 import com.example.parisbistro.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -69,46 +64,33 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
-public class PedidoReceberEmCasaActivity extends AppCompatActivity implements View.OnClickListener {
+public class RetirarLocalActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button button_recuperarDadosUsuario;
+    private Button button_finalizarPedido;
     private EditText editText_nome;
     private EditText editText_contato;
-    private EditText editText_endereco;
-    private EditText editText_referencia;
-
-    private Button button_pagarPessoalmenteCartao;
-    private Button button_pagarPessoalmenteDinheiro;
 
     private FirebaseFirestore firestore;
-    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedido_receber_em_casa);
+        setContentView(R.layout.activity_retirar_local);
 
         configToolbar();
 
-        button_recuperarDadosUsuario = findViewById(R.id.button_pedidoReceber_carregarDadosUsuario);
-        editText_nome = findViewById(R.id.editText_pedidoReceber_usuarioNome);
-        editText_contato = findViewById(R.id.editText_pedidoReceber_usuarioTelefone);
-        editText_endereco = findViewById(R.id.editText_pedidoReceber_usuarioEndereco);
-        editText_referencia = findViewById(R.id.editText_pedidoReceber_usuarioReferencia);
-
-        editText_contato.addTextChangedListener(MaskEditText.mask(editText_contato, "(##)#####-####"));
-        editText_contato.setFilters(new InputFilter[]{new InputFilter.LengthFilter(14)});
-
-        button_pagarPessoalmenteCartao = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteCartao);
-        button_pagarPessoalmenteDinheiro = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteDinheiro);
-
-        button_recuperarDadosUsuario.setOnClickListener(this);
-        button_pagarPessoalmenteCartao.setOnClickListener(this);
-        button_pagarPessoalmenteDinheiro.setOnClickListener(this);
-
         firestore = FirebaseFirestore.getInstance();
 
+        button_recuperarDadosUsuario = findViewById(R.id.button_pedidoRetirar_carregarDadosUsuario);
+        editText_nome = findViewById(R.id.editText_pedidoRetirar_usuarioNome);
+        editText_contato = findViewById(R.id.editText_pedidoRetirar_usuarioTelefone);
+        button_finalizarPedido = findViewById(R.id.button_pedidoRetirar_finalizarPedido);
+
+        button_recuperarDadosUsuario.setOnClickListener(this);
+        button_finalizarPedido.setOnClickListener(this);
     }
+
 
     private void configToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -117,7 +99,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView textView = findViewById(R.id.textView_toolbar);
-        textView.setText("Receber pedido em casa");
+        textView.setText("Retirar pedido no local");
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -127,19 +109,16 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         return true;
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.button_pedidoReceber_carregarDadosUsuario:
+            case R.id.button_pedidoRetirar_carregarDadosUsuario:
                 buttonCarregarDadosUsuario();
                 break;
 
-            case R.id.button_pedidoReceber_pagarPessoalmenteCartao:
-                buttonPagarPessoalmenteCartao();
-                break;
-
-            case R.id.button_pedidoReceber_pagarPessoalmenteDinheiro:
-                buttonPagarPessoalmenteDinheiro();
+            case R.id.button_pedidoRetirar_finalizarPedido:
+                buttonFinalizarPedido();
                 break;
         }
     }
@@ -156,13 +135,9 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 if (documentSnapshot.exists()){
                     String nome = (String) documentSnapshot.getData().get("nome");
                     String contato = (String) documentSnapshot.getData().get("contato");
-                    String endereco = (String) documentSnapshot.getData().get("endereco");
-                    String referencia = (String) documentSnapshot.getData().get("referencia");
 
                     editText_nome.setText(nome);
                     editText_contato.setText(contato);
-                    editText_endereco.setText(endereco);
-                    editText_referencia.setText(referencia);
                 }else{
                     Toast.makeText(getBaseContext(), "Ainda não foi realizado nenhum pedido", Toast.LENGTH_SHORT).show();
                 }
@@ -174,84 +149,39 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 Toast.makeText(getBaseContext(), "Erro ao recuperar os dados", Toast.LENGTH_SHORT).show();
             }
         });
+        dialogProgress.dismiss();
     }
 
-
-    private void buttonPagarPessoalmenteCartao(){
+    private void buttonFinalizarPedido(){
         String nome = editText_nome.getText().toString();
         String contato = editText_contato.getText().toString();
-        String endereco = editText_endereco.getText().toString();
-        String referencia = editText_referencia.getText().toString();
-        String forma_pagamento = "<b> Entrega | Cartão </b>";
+        String forma_pagamento = "<b> Retirada no local <b>";
 
-        if (nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty()){
+        if (nome.trim().isEmpty() || contato.trim().isEmpty()){
             Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para entrega", Toast.LENGTH_SHORT).show();
         }else{
             if (Util.statusInternet_MoWi(getBaseContext())){
-                confirmarPedido(nome,contato,endereco,referencia,forma_pagamento);
+                confirmarPedido(nome,contato,forma_pagamento);
             }else{
                 Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-
-    private void confirmarPedido(String nome, String contato, String endereco, String referencia, String forma_pagamento){
+    private void confirmarPedido(String nome, String contato, String forma_pagamento){
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Confirmar Pedido")
                 .setMessage("\nGostaria de realizar o pedido?")
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, forma_pagamento);
+                        salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, forma_pagamento);
                     }
                 }).create();
         dialog.show();
     }
 
-
-    private void buttonPagarPessoalmenteDinheiro(){
-        String nome = editText_nome.getText().toString();
-        String contato = editText_contato.getText().toString();
-        String endereco = editText_endereco.getText().toString();
-        String referencia = editText_referencia.getText().toString();
-
-        if (nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty()){
-            Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para entrega", Toast.LENGTH_SHORT).show();
-        }else{
-            if (Util.statusInternet_MoWi(getBaseContext())){
-
-                Dialog dialog = new Dialog(this);
-                dialog.setContentView(R.layout.dialog_pedido_receber_em_casa);
-
-                EditText editTextTroco = dialog.findViewById(R.id.editText_pedidoReceber_dialogTroco);
-                Button button = dialog.findViewById(R.id.button_pedidoReceber_dialogFinalizar);
-
-                dialog.dismiss();
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String troco = editTextTroco.getText().toString();
-                        if (troco.trim().isEmpty()){
-                            String semTroco = "<b> Entrega | Não precisa de  troco </b>";
-                            salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, semTroco);
-                        }else{
-                            String levarTroco = "<b> Entrega | Troco para: "+troco +" </b>";
-                            salvarDadosUsuarioPagamentoPessoalmenteFirebase(nome, contato, endereco, referencia, levarTroco);
-                        }
-                    }
-                });
-
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
-            }else{
-                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-
-    private void salvarDadosUsuarioPagamentoPessoalmenteFirebase(String nome, String contato, String endereco, String referencia, String forma_pagamento){
+    private void salvarDadosUsuarioPagamentoPessoalmenteFirebase(String nome, String contato, String forma_pagamento){
 
         DialogProgress dialogProgress = new DialogProgress();
         dialogProgress.show(getSupportFragmentManager(),"1");
@@ -261,8 +191,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         HashMap<String,Object> dadosUsuarios = new HashMap<>();
         dadosUsuarios.put("nome", nome);
         dadosUsuarios.put("contato", contato);
-        dadosUsuarios.put("endereco", endereco);
-        dadosUsuarios.put("referencia", referencia);
 
         DocumentReference reference = firestore.collection("usuarios").document(uid);
 
@@ -271,16 +199,15 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             public void onComplete(@NonNull Task<Void> task) {
                 dialogProgress.dismiss();
                 if (task.isSuccessful()){
-                    obterToken(nome, contato, endereco, referencia, forma_pagamento);
+                    obterToken(nome, contato, forma_pagamento);
                 }else{
                     Toast.makeText(getBaseContext(), "Erro ao salvar os dados: "+ task.getException().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
-    private void obterToken(String nome, String contato, String endereco, String referencia, String forma_pagamento){
+    private void obterToken(String nome, String contato, String forma_pagamento){
         DialogProgress dialogProgress = new DialogProgress();
         dialogProgress.show(getSupportFragmentManager(),"2");
 
@@ -291,16 +218,16 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                         dialogProgress.dismiss();
                         if (task.isSuccessful()){
                             String token = task.getResult().getToken();
-                            salvarPedidoFirebase(nome, contato, endereco, referencia, forma_pagamento, token);
+                            salvarPedidoFirebase(nome, contato, forma_pagamento, token);
                         }else{
                             String erro = "Sem token";
-                            salvarPedidoFirebase(nome, contato, endereco, referencia, forma_pagamento, erro);
+                            salvarPedidoFirebase(nome, contato, forma_pagamento, erro);
                         }
                     }
                 });
     }
 
-    private void salvarPedidoFirebase(String nome,String  contato,String  endereco,String  referencia,String forma_pagamento,String  token){
+    private void salvarPedidoFirebase(String nome,String  contato, String forma_pagamento,String  token){
         DialogProgress dialogProgress = new DialogProgress();
         dialogProgress.show(getSupportFragmentManager(),"3");
 
@@ -321,13 +248,14 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         HashMap<String, Object> dadosPedido = new HashMap<>();
         dadosPedido.put("cliente_contato",contato);
-        dadosPedido.put("cliente_endereco",endereco + " - " + referencia);
+        dadosPedido.put("cliente_endereco",forma_pagamento);
         dadosPedido.put("cliente_nome",nome);
         dadosPedido.put("cliente_uid",uid);
 
         dadosPedido.put("pedido_dados",todosProdutos);
         dadosPedido.put("pedido_data", data);
         dadosPedido.put("pedido_forma_pagamento",forma_pagamento);
+
         dadosPedido.put("pedido_id",idPedido);
         dadosPedido.put("pedido_status","em andamento");
         dadosPedido.put("pedido_valor",totalValorProdutos);
@@ -393,7 +321,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE,"application/pdf");
             contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME,"Pedido"+idPedido);
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH,Environment.DIRECTORY_DOWNLOADS+"/Recibo/");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS+"/Recibo/");
 
             ContentResolver resolver = getContentResolver();
             uri = resolver.insert(MediaStore.Downloads.getContentUri("external"),contentValues);
@@ -433,7 +361,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         Font font = new Font(Font.FontFamily.TIMES_ROMAN,10, Font.NORMAL);
 
-        Paragraph paragraph = new Paragraph("Paris Bistrô Delivery",font);
+        Paragraph paragraph = new Paragraph("Deleviry Lanches",font);
         paragraph.setAlignment(Element.ALIGN_CENTER);
         document.add(paragraph);
 
@@ -560,6 +488,4 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         String valorTotalString = decimalFormat.format(valorTotal);
         return valorTotalString;
     }
-
-
 }
