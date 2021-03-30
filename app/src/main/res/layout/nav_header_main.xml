@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="@string/titulo_navheader"
+        android:text="@string/titulo_lateral"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         style="@style/ThemaTexto"/>
 
@@ -32,6 +32,6 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/descricao_navheader"
+        android:text="@string/descricao_lateral"
         style="@style/ThemaTexto"/>
 </LinearLayout>

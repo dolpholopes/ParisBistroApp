@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 loginFirebase(email, senha);
 
             }else{
-                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
             }
         }
     }

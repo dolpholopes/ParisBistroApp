@@ -92,7 +92,7 @@ public class CadastrarActivity extends AppCompatActivity implements View.OnClick
            if (Util.statusInternet_MoWi(getBaseContext())){
                criarContaFirebase(email,senha);
            }else{
-               Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+               Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
            }
         }
     }

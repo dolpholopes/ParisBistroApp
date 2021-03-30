@@ -198,7 +198,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             if (Util.statusInternet_MoWi(getBaseContext())){
                 salvarDadosUsuarioPagamentoCartaoFirebase(nome, contato, endereco, referencia);
             }else{
-                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -251,7 +251,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             if (Util.statusInternet_MoWi(getBaseContext())){
                 confirmarPedido(nome,contato,endereco,referencia,forma_pagamento);
             }else{
-                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -306,7 +306,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
             }else{
-                Toast.makeText(getBaseContext(), "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
             }
         }
     }

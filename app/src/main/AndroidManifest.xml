@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParisBistro">
 
+        <activity android:name=".activities.MainActivity"
+            android:theme="@style/AppThemNoActionBar" />
+
         <activity
             android:name=".activities.PagarCartaoCreditoActivity"
             android:theme="@style/AppThemNoActionBar" />
@@ -40,7 +43,7 @@
             android:name=".activities.PedidosActivity"
             android:theme="@style/AppThemNoActionBar" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/AppThemNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
