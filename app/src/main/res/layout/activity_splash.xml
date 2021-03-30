@@ -3,12 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+<<<<<<< HEAD
     android:layout_height="match_parent"
     tools:context=".activities.SplashActivity">
 
+=======
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".activities.SplashActivity">
+
+
+>>>>>>> 0d9bd449a8bf8b4ee6b74402a0390cbba74a76c4
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/logo_branca"/>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0d9bd449a8bf8b4ee6b74402a0390cbba74a76c4
 </LinearLayout>
