@@ -16,11 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.parisbistro.R;
-import com.example.parisbistro.adapters.AdapterRecyclerViewAdicional;
 import com.example.parisbistro.adapters.AdapterRecyclerViewCarrinho;
-import com.example.parisbistro.model.Adicional;
 import com.example.parisbistro.model.Produto;
 import com.example.parisbistro.singleton.Carrinho;
+import com.example.parisbistro.util.DialogProgress;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -49,22 +54,11 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
 
         textView_continuar.setOnClickListener(this);
 
-        produtos = Carrinho.getInstance();
+        produtos = Carrinho.getInstance().getProdutosCarrinho();
 
         configRecyclerView();
 
-        String valorTotal = Carrinho.valorTotal();
-        textView_valorTotal.setText("R$ "+valorTotal);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.textView_carrinho_continuar:
-                    buttonCarrinhoContinuar();
-                break;
-
-        }
+        atualizarValorTotalProdutos();
     }
 
     private void configToolbar() {
@@ -85,6 +79,18 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 
+    private void atualizarValorTotalProdutos(){
+        double valorTotal = 0;
+        for (Produto produto: produtos){
+            double valor = Double.valueOf(produto.getValor());
+            valorTotal = valorTotal + valor;
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String valorTotalString = decimalFormat.format(valorTotal);
+
+        textView_valorTotal.setText("R$ " + valorTotalString);
+    }
 
     private void configRecyclerView() {
         adapterRecyclerViewCarrinho = new AdapterRecyclerViewCarrinho(this, produtos, this);
@@ -100,25 +106,52 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         Toast.makeText(getBaseContext(), "O item " + produto.getNome() + " foi removido", Toast.LENGTH_SHORT).show();
     }
 
-    private void atualizarValorTotalProdutos(){
-        double valorTotal = 0;
-        for (Produto produto: produtos){
-            double valor = Double.valueOf(produto.getValor());
-            valorTotal = valorTotal + valor;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.textView_carrinho_continuar:
+                consultarEstadoEmpresa();
+                break;
         }
+    }
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String valorTotalString = decimalFormat.format(valorTotal);
+    private void consultarEstadoEmpresa(){
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"33");
 
-        textView_valorTotal.setText("R$ " + valorTotalString);
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore.collection("app").document("estadoempresa").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                dialogProgress.dismiss();
+                if (documentSnapshot.exists()){
+                    boolean estadoEmpresa = (Boolean) documentSnapshot.getData().get("empresaaberta");
+                    if (estadoEmpresa){
+                        buttonCarrinhoContinuar();
+                    }else{
+                        dialogoEstadoEmpresa();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                dialogProgress.dismiss();
+                Toast.makeText(getBaseContext(), "Erro no servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void buttonCarrinhoContinuar(){
         if (produtos.isEmpty()){
             Toast.makeText(getBaseContext(), "Nenhum item foi adicionado ao carrinho", Toast.LENGTH_SHORT).show();
         }else{
-            //startActivity(new Intent(this, LoginActivity.class));
-           dialogoOpcaoPagamento();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null){
+                dialogoOpcaoPagamento();
+            }else{
+                startActivity(new Intent(this, LoginActivity.class));
+            }
         }
     }
 
@@ -135,6 +168,19 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
                     public void onClick(DialogInterface dialog, int which) {
 
                         startActivity(new Intent(getBaseContext(), PedidoReceberEmCasaActivity.class));
+
+                    }
+                }).create();
+
+        dialog.show();
+    }
+
+    private void dialogoEstadoEmpresa(){
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setMessage("O delivery esta fechado no momento\n\nHorário de funcionamento das 18:00 às 00:00 horas")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 }).create();

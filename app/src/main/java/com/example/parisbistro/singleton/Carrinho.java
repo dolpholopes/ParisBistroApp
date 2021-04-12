@@ -8,28 +8,30 @@ import java.util.List;
 
 public class Carrinho {
 
-    private static List<Produto> produtosCarrinho;
+    private volatile static Carrinho carrinho;
+    private  List<Produto> produtosCarrinho;
 
-    public static List<Produto> getInstance(){
-        if (produtosCarrinho == null){
-            produtosCarrinho = new ArrayList<Produto>();
+    public static Carrinho getInstance(){
+        if (carrinho == null){
+
+            synchronized (Carrinho.class){
+                if (carrinho == null){
+                    carrinho = new Carrinho();
+                }
+            }
         }
+        return carrinho;
+    }
 
-        return produtosCarrinho;
+    public Carrinho(){
+        produtosCarrinho = new ArrayList<Produto>();
+    }
+
+    public  List<Produto> getProdutosCarrinho(){
+        return this.produtosCarrinho;
     }
 
 
-    public static String valorTotal(){
-        double valorTotal = 0;
-        for (Produto produto: produtosCarrinho){
-            double v = Double.valueOf(produto.getValor());
-            valorTotal = valorTotal + v;
-        }
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String valor = decimalFormat.format(valorTotal);
-
-        return valor;
-    }
 
 }

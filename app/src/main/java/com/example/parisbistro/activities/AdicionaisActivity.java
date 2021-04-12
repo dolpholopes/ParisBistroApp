@@ -213,7 +213,7 @@ public class AdicionaisActivity extends AppCompatActivity implements View.OnClic
 
     private void adicionarPedidoCarrinho(String valor, String adicionais) {
 
-        List<Produto> produtosCarrinho = Carrinho.getInstance();
+        List<Produto> produtosCarrinho = Carrinho.getInstance().getProdutosCarrinho();
 
         String observacao = editText_observacao.getText().toString();
 

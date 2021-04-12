@@ -77,6 +77,8 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
     private EditText editText_endereco;
     private EditText editText_referencia;
 
+    int taxaDeEntrega = 2;
+
     private Button button_pagarPessoalmenteCartao;
     private Button button_pagarPessoalmenteDinheiro;
 
@@ -313,7 +315,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         String todosProdutos = "";
 
-        for (Produto produto: Carrinho.getInstance()){
+        for (Produto produto: Carrinho.getInstance().getProdutosCarrinho()){
             todosProdutos = todosProdutos + produto.getNome() + " <br> " +
                     produto.getAdicional() + " <br> " +
                     produto.getObservacao() + " <br><br> ";
@@ -538,7 +540,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        Carrinho.getInstance().clear();
+                        Carrinho.getInstance().getProdutosCarrinho().clear();
                         Intent intent = new Intent(getBaseContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -550,8 +552,11 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
     }
 
     private String valorTotalProdutos(){
-        double valorTotal = 0;
-        for (Produto produto: Carrinho.getInstance()){
+
+        int taxaEntrega = 2;
+
+        double valorTotal = taxaEntrega;
+        for (Produto produto: Carrinho.getInstance().getProdutosCarrinho()){
             double valor = Double.valueOf(produto.getValor());
             valorTotal = valorTotal + valor;
         }

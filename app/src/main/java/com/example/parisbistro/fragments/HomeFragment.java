@@ -36,6 +36,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -162,7 +163,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
 
 
     private void iniciarOuvinteCategoria(){
-        CollectionReference reference = firestore.collection("categorias");
+        Query reference = firestore.collection("categorias").whereEqualTo("exibir_categoria", true);
 
         reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -202,7 +203,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Adap
         TextView textView = getView().findViewById(R.id.textView_home_quantidadeCarrinho);
         CardView cardView = getView().findViewById(R.id.cardView_carrinho);
 
-        List<Produto> produtos = Carrinho.getInstance();
+        List<Produto> produtos = Carrinho.getInstance().getProdutosCarrinho();
         if (!produtos.isEmpty()){
             cardView.setVisibility(View.VISIBLE);
             int quantidade = produtos.size();
